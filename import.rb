@@ -8,6 +8,7 @@ require 'toto'
 file = File.new(ARGV[0])
 
 doc = Hpricot( File.open(file) )
+rewrite = File.open('./rewrite.nginx', 'w')
 
 (doc/"item").each do |item|
 if item.search("wp:post_type").first.inner_text == "post" and item.search("wp:status").first.inner_text == "publish" then
@@ -37,6 +38,10 @@ if item.search("wp:post_type").first.inner_text == "post" and item.search("wp:st
   
 # If you use a differing format for the slug, you should change this strftime
   path = "./articles/#{time.strftime("%Y-%m-%d")}#{'-' + slug if slug}.txt"
+
+  new_url = "/#{time.strftime("%Y/%m/%d")}#{'-' + slug if slug}"
+  rewrite.puts "rewrite ^/?p=#{post_id} #{new_url} permanent;\n"
+  rewrite.puts "rewrite ^/archives/#{post_id} #{new_url} permanent;\n"
   
   begin 
     newpost = File.open(path,'w')
