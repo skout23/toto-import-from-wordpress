@@ -42,9 +42,9 @@ if item.search("wp:post_type").first.inner_text == "post" and item.search("wp:st
   # If you use a differing format for the slug, you should change this strftime
   path = "./articles/#{time.strftime("%Y-%m-%d")}#{'-' + slug if slug}.txt"
 
-  new_url = "/#{time.strftime("%Y/%m/%d")}#{'-' + slug if slug}"
+  new_url = "/#{time.strftime("%Y/%m/%d")}#{'/' + slug if slug}"
   nginx_rewrite.puts "rewrite ^/(?p=|archives/)#{post_id} #{new_url} permanent;\n"
-  rack_rewrite.puts "r301 %r{/(?p=|archives/)#post_id)}, '#new_url'\n"
+  rack_rewrite.puts "r301 %r{/(?:\\?p=|archives/)#{post_id}}, '#{new_url}'\n"
   
   begin 
     newpost = File.open(path,'w')
