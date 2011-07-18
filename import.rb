@@ -42,9 +42,9 @@ if item.search("wp:post_type").first.inner_text == "post" and item.search("wp:st
   # If you use a differing format for the slug, you should change this strftime
   path = "./articles/#{time.strftime("%Y-%m-%d")}#{'-' + slug if slug}.txt"
 
-  new_url = "/#{time.strftime("%Y/%m/%d")}#{'-' + slug if slug}"
+  new_url = "/#{time.strftime("%Y/%m/%d")}#{'/' + slug if slug}"
   nginx_rewrite.puts "rewrite ^/(?p=|archives/)#{post_id} #{new_url} permanent;\n"
-  rack_rewrite.puts "r301 %r{/(?p=|archives/)#post_id)}, '#new_url'\n"
+  rack_rewrite.puts "r301 %r{/(?:\\?p=|archives/)#{post_id}}, '#{new_url}'\n"
   
   begin 
     newpost = File.open(path,'w')
@@ -81,4 +81,13 @@ puts "- to fix %AUTHOR% metadata stubs in all imported articles, run:\n"
 puts "  $ sed -i 's/%AUTHOR%/My Real Name/' ./articles/*\n\n"
 puts "- to fix excerpt delimiter in all imported articles, run:\n"
 puts "  $ sed -i 's/<!-- more -->/~\\n/' ./articles/*\n\n"
+puts "- to set old to new URLs permanent redirects with nginx:\n"
+puts "  See nginx manual on http://wiki.nginx.org/HttpRewriteModule\n"
+puts "  You will find full map of redirect rules in `rewrite.nginx`\n\n"
+puts "- to set old to new URLs permanent redirects with Rack::Rewrite:\n"
+puts "  Put following into your config.ru file:\n\n"
+puts "  require 'rack/rewrite'\n"
+puts "  use Rack::Rewrite do\n"
+puts "    # content of rewrite.rack here\n"
+puts "  end\n\n"
 puts "Have fun in a Wonderland of Oz!\n"
