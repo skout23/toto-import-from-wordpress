@@ -5,9 +5,7 @@ require 'hpricot'
 require 'time'
 require 'toto'
 
-file = File.new(ARGV[0])
-
-doc = Hpricot( File.open(file) )
+doc = Hpricot( File.open(ARGV[0]) )
 nginx_rewrite = File.open('./rewrite.nginx', 'w')
 rack_rewrite = File.open('./rewrite.rack', 'w')
 
